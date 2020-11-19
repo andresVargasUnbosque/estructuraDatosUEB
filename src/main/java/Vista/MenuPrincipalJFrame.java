@@ -56,9 +56,9 @@ public class MenuPrincipalJFrame extends javax.swing.JFrame {
         jMenu4 = new javax.swing.JMenu();
         jMenu5 = new javax.swing.JMenu();
         jMenu6 = new javax.swing.JMenu();
-        botonAbrirCargarArchivo = new javax.swing.JButton();
         botonBuscarRegistros = new javax.swing.JButton();
         btnListaRegistros = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         menu1.setLabel("File");
         menuBar1.add(menu1);
@@ -107,50 +107,56 @@ public class MenuPrincipalJFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Peliculas");
+        setBackground(new java.awt.Color(255, 255, 255));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-        botonAbrirCargarArchivo.setText("Cargar Archivo");
-        botonAbrirCargarArchivo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonAbrirCargarArchivoActionPerformed(evt);
-            }
-        });
-
-        botonBuscarRegistros.setText("Busqueda de registros");
+        botonBuscarRegistros.setBackground(new java.awt.Color(255, 255, 255));
+        botonBuscarRegistros.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        botonBuscarRegistros.setForeground(new java.awt.Color(0, 153, 0));
+        botonBuscarRegistros.setText("Busqueda en registros ya cargados");
         botonBuscarRegistros.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonBuscarRegistrosActionPerformed(evt);
             }
         });
 
-        btnListaRegistros.setText("Lista de registros");
+        btnListaRegistros.setBackground(new java.awt.Color(255, 255, 255));
+        btnListaRegistros.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnListaRegistros.setForeground(new java.awt.Color(255, 153, 0));
+        btnListaRegistros.setText("Cargar y ver registros");
         btnListaRegistros.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnListaRegistrosActionPerformed(evt);
             }
         });
 
+        jLabel2.setIcon(new javax.swing.ImageIcon("C:\\Users\\andre\\Desktop\\UEBlogo2.png")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(149, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addGap(40, 40, 40))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(168, 168, 168)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnListaRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonBuscarRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonAbrirCargarArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(139, 139, 139))
+                    .addComponent(botonBuscarRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(189, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 135, Short.MAX_VALUE)
-                .addComponent(botonAbrirCargarArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addComponent(jLabel2)
+                .addGap(65, 65, 65)
+                .addComponent(btnListaRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35)
                 .addComponent(botonBuscarRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(48, 48, 48)
-                .addComponent(btnListaRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(115, 115, 115))
+                .addContainerGap(131, Short.MAX_VALUE))
         );
 
         pack();
@@ -164,17 +170,9 @@ public class MenuPrincipalJFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         ventanaListaRegistros ventanaRegistros = new ventanaListaRegistros();
         ventanaRegistros.setVisible(true);
+        
 
     }//GEN-LAST:event_btnListaRegistrosActionPerformed
-
-    private void botonAbrirCargarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAbrirCargarArchivoActionPerformed
-        // TODO add your handling code here:
-        /* CargarArchivo cargarArchivo = new CargarArchivo();
-        cargarArchivo.setVisible(true);*/
-
-        cargarArchivo();
-
-    }//GEN-LAST:event_botonAbrirCargarArchivoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -218,12 +216,12 @@ public class MenuPrincipalJFrame extends javax.swing.JFrame {
 
         try {
             String texto = "";
-            Object cabeceras[] = {"", ""};
+            Object cabeceras[] = {"TITULO", "ESTUDIO", "ESTADO", "VERSIONES", "PRECIO","CALIFICACION", "AÑO", "GENERO", "FECHA","ID"};
             modeloTabla = new DefaultTableModel(cabeceras, 0);
             archivo.showOpenDialog(this);
 
             File abrir = archivo.getSelectedFile();
-            Object[] elemento = new Object[5];
+            Object[] elemento = new Object[10];
             if (archivo != null) {
                 FileReader fichero = new FileReader(abrir);
                 BufferedReader leer = new BufferedReader(fichero);
@@ -241,6 +239,7 @@ public class MenuPrincipalJFrame extends javax.swing.JFrame {
                     elemento[9] = registro[9];
                     modeloTabla.addRow(elemento);
                 }
+              //  jTable1.setModel(modeloTabla);
             }
         } catch (Exception e) {
 
@@ -249,10 +248,10 @@ public class MenuPrincipalJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton botonAbrirCargarArchivo;
     private javax.swing.JButton botonBuscarRegistros;
     private javax.swing.JButton btnListaRegistros;
     private javax.swing.JInternalFrame jInternalFrame1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;

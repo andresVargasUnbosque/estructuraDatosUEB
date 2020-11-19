@@ -5,15 +5,29 @@
  */
 package Vista;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  *
  * @author andre
  */
 public class ventanaListaRegistros extends javax.swing.JFrame {
-    
+
     public DefaultTableModel modelo;
     int filas;
 
@@ -22,7 +36,7 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
      */
     public ventanaListaRegistros() {
         initComponents();
-        modelo = new DefaultTableModel();
+      /*  modelo = new DefaultTableModel();
         modelo.addColumn("ID");
         modelo.addColumn("TITULO");
         modelo.addColumn("ESTUDIO");
@@ -32,13 +46,15 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
         modelo.addColumn("CALIFICACION");
         modelo.addColumn("AÑO");
         modelo.addColumn("GENERO");
-        modelo.addColumn("FECHA");
-        this.jTablePeliculas.setModel(modelo);
+        modelo.addColumn("FECHA");*/
+       //  this.jTablePeliculas.setModel(modelo);
         //inicializarTabla();
-        /* MenuPrincipalJFrame frame = new MenuPrincipalJFrame();
-         this.jTablePeliculas.setModel(frame.cargarArchivo());*/
+        MenuPrincipalJFrame frame = new MenuPrincipalJFrame();
+        
+        modelo=frame.cargarArchivo();
+        this.jTablePeliculas.setModel(modelo);
     }
-    
+
     public void inicializarTabla() {
         MenuPrincipalJFrame frame = new MenuPrincipalJFrame();
         this.jTablePeliculas.setModel(frame.cargarArchivo());
@@ -56,10 +72,7 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
         botonAgregar = new javax.swing.JButton();
         botonModificar = new javax.swing.JButton();
         botonEliminar = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTablePeliculas = new javax.swing.JTable();
+        jButtonGuardar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -81,8 +94,12 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
         jComboBoxCalificacion = new javax.swing.JComboBox<>();
         jComboBoxGenero = new javax.swing.JComboBox<>();
         jComboBoxVersion = new javax.swing.JComboBox<>();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTablePeliculas = new javax.swing.JTable();
+        jLabel12 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(1000, 700));
 
         botonAgregar.setText("Agregar");
@@ -106,8 +123,110 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
             }
         });
 
-        jButton4.setText("jButton4");
+        jButtonGuardar.setText("Guardar");
+        jButtonGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonGuardarActionPerformed(evt);
+            }
+        });
 
+        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 153, 51));
+        jLabel1.setText("Listado de Peliculas");
+
+        jLabel2.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 153, 51));
+        jLabel2.setText("ID");
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(0, 153, 51));
+        jLabel3.setText("Titulo");
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(0, 153, 51));
+        jLabel4.setText("Calificación");
+
+        jLabel5.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 153, 0));
+        jLabel5.setText("Año");
+
+        jLabel6.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 153, 0));
+        jLabel6.setText("Estudio");
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(0, 153, 51));
+        jLabel7.setText("Estado");
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(0, 153, 51));
+        jLabel8.setText("Genero");
+
+        jLabel9.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(255, 153, 0));
+        jLabel9.setText("Precio");
+
+        jLabel10.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(255, 153, 0));
+        jLabel10.setText("Versiones");
+
+        jLabel11.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(255, 153, 0));
+        jLabel11.setText("Fecha de Publicación");
+
+        jTextFieldID.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        jTextFieldID.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextFieldIDKeyTyped(evt);
+            }
+        });
+
+        jTextFieldPrecio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldPrecioActionPerformed(evt);
+            }
+        });
+        jTextFieldPrecio.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextFieldPrecioKeyTyped(evt);
+            }
+        });
+
+        jTextFieldAno.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextFieldAnoKeyTyped(evt);
+            }
+        });
+
+        jTextFieldFechaPublicacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldFechaPublicacionActionPerformed(evt);
+            }
+        });
+
+        jComboBoxEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Cancelada", "Descontinuada", "Fuera", "Pendiente", "Pospuesta", "Retransmitida" }));
+
+        jComboBoxCalificacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Acompañado por un Adulto", "Apta para mayores de 13", "Apta para mayores de 15", "Apta para mayores de 17", "Apta para mayores de 18", "Apta para menores de 13", "No Clasificado", "Publico General" }));
+        jComboBoxCalificacion.setRequestFocusEnabled(false);
+
+        jComboBoxGenero.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Acccion/Aventura", "Accion/Comedia", "Animada", "Anime", "Ballet", "Comedia", "Comedia/Drama", "Danza/Ballet", "Deportes", "Documental", "Drama", "Eroticas", "Familia", "Fantasia", "Guerra", "Horror", "Interes Especial", "Interculturales", "Juegos", "Karaoke", "Musica", "Miedo", "Muda", "Musical", "Misterio/Suspenso", "Oeste", "Opera", "S tira", "SciFi", "Software", "Suspenso/Miedo", "TV Classics", "Varios" }));
+
+        jComboBoxVersion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "4:03", "0.16875", "4:3 P&S", "4:3 P&S, LBX", "4:3 P&S, 16:9", "4:3 P&S, MINI DVD", "4:3 P&S, UMD", "4:3,  BLUE-RAY", "4:3,  DUALDISC", "4:3,  GAMECUBE", "4:3,  HD-DVD", "4:3, V LBX", "4:3, LBX, 16:9", "4:3, MINI DVD", "4:3, PS2", "4:3, PSP", "4:3, UMD", "4:3, WMVHD", "4:3, XBOX", "LBX", "LBX, 16:9", "LBX, 16:9, 16:9", "LBX, 16:9, BLU-RAY", "LBX, 16:9, DUALDISC", "LBX, 16:9, HD-DVD", "LBX, 16:9, MINI DVD", "LBX, 16:9, PS2", "LBX, 16:9, UMD", "LBX, 16:9, WMVHD", "LBX, 16:9, XBOX", "LBX, UMD", "LBX, WMVHD", "VAR", " ", " " }));
+        jComboBoxVersion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxVersionActionPerformed(evt);
+            }
+        });
+
+        jTablePeliculas.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jTablePeliculas.setForeground(new java.awt.Color(0, 153, 51));
         jTablePeliculas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null},
@@ -126,55 +245,7 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTablePeliculas);
 
-        jScrollPane2.setViewportView(jScrollPane1);
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
-        jLabel1.setText("Listado de Peliculas");
-
-        jLabel2.setText("ID");
-
-        jLabel3.setText("Titulo");
-
-        jLabel4.setText("Calificación");
-
-        jLabel5.setText("Año");
-
-        jLabel6.setText("Estudio");
-
-        jLabel7.setText("Estado");
-
-        jLabel8.setText("Genero");
-
-        jLabel9.setText("Precio");
-
-        jLabel10.setText("Versiones");
-
-        jLabel11.setText("Fecha de Publicación");
-
-        jTextFieldPrecio.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextFieldPrecioActionPerformed(evt);
-            }
-        });
-
-        jTextFieldFechaPublicacion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextFieldFechaPublicacionActionPerformed(evt);
-            }
-        });
-
-        jComboBoxEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Cancelada", "Descontinuada", "Fuera", "Pendiente", "Pospuesta", "Retransmitida" }));
-
-        jComboBoxCalificacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Acompañado por un Adulto", "Apta para mayores de 13", "Apta para mayores de 15", "Apta para mayores de 17", "Apta para mayores de 18", "Apta para menores de 13", "No Clasificado", "Publico General" }));
-
-        jComboBoxGenero.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Acccion/Aventura", "Accion/Comedia", "Animada", "Anime", "Ballet", "Comedia", "Comedia/Drama", "Danza/Ballet", "Deportes", "Documental", "Drama", "Eroticas", "Familia", "Fantasia", "Guerra", "Horror", "Interes Especial", "Interculturales", "Juegos", "Karaoke", "Musica", "Miedo", "Muda", "Musical", "Misterio/Suspenso", "Oeste", "Opera", "S tira", "SciFi", "Software", "Suspenso/Miedo", "TV Classics", "Varios" }));
-
-        jComboBoxVersion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "4:03", "0.16875", "4:3 P&S", "4:3 P&S, LBX", "4:3 P&S, 16:9", "4:3 P&S, MINI DVD", "4:3 P&S, UMD", "4:3,  BLUE-RAY", "4:3,  DUALDISC", "4:3,  GAMECUBE", "4:3,  HD-DVD", "4:3, V LBX", "4:3, LBX, 16:9", "4:3, MINI DVD", "4:3, PS2", "4:3, PSP", "4:3, UMD", "4:3, WMVHD", "4:3, XBOX", "LBX", "LBX, 16:9", "LBX, 16:9, 16:9", "LBX, 16:9, BLU-RAY", "LBX, 16:9, DUALDISC", "LBX, 16:9, HD-DVD", "LBX, 16:9, MINI DVD", "LBX, 16:9, PS2", "LBX, 16:9, UMD", "LBX, 16:9, WMVHD", "LBX, 16:9, XBOX", "LBX, UMD", "LBX, WMVHD", "VAR", " ", " " }));
-        jComboBoxVersion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBoxVersionActionPerformed(evt);
-            }
-        });
+        jLabel12.setIcon(new javax.swing.ImageIcon("C:\\Users\\andre\\Desktop\\UEBlogo2.png")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -183,73 +254,82 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2)
                     .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel9)
+                            .addComponent(jTextFieldID)
+                            .addComponent(jTextFieldPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(38, 38, 38)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4)
+                            .addComponent(jComboBoxCalificacion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jTextFieldTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)
+                            .addComponent(jTextFieldAno, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6)
+                            .addComponent(jTextFieldEstudio, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jComboBoxGenero, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel8)
+                                .addComponent(jComboBoxEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel7))
+                        .addGap(39, 39, 39)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextFieldFechaPublicacion)
+                            .addComponent(jComboBoxVersion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel11)
+                                    .addComponent(jLabel10))
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(botonModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(botonAgregar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel9)
-                                    .addComponent(jTextFieldID)
-                                    .addComponent(jTextFieldPrecio, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
-                                .addGap(38, 38, 38)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jComboBoxCalificacion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jTextFieldTitulo))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jTextFieldAno, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jTextFieldEstudio, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel7)
-                                        .addGap(168, 168, 168)
-                                        .addComponent(jLabel10))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jComboBoxGenero, 0, 162, Short.MAX_VALUE)
-                                            .addComponent(jLabel8)
-                                            .addComponent(jComboBoxEstado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addGap(39, 39, 39)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jComboBoxVersion, 0, 158, Short.MAX_VALUE)
-                                            .addComponent(jLabel11)
-                                            .addComponent(jTextFieldFechaPublicacion))))))
-                        .addGap(0, 38, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(botonModificar)
-                    .addComponent(botonAgregar)
-                    .addComponent(botonEliminar)
-                    .addComponent(jButton4))
-                .addGap(22, 22, 22))
+                                    .addComponent(jLabel12)
+                                    .addComponent(botonEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButtonGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(22, 22, 22)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
                     .addComponent(jLabel6)
                     .addComponent(jLabel7)
                     .addComponent(jLabel10))
-                .addGap(8, 8, 8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextFieldTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextFieldEstudio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBoxEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBoxVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonAgregar))
+                    .addComponent(jComboBoxVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
@@ -263,18 +343,20 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
                     .addComponent(jTextFieldAno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBoxCalificacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBoxGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonModificar)
                     .addComponent(jTextFieldFechaPublicacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(47, 47, 47)
+                        .addGap(1, 1, 1)
+                        .addComponent(botonAgregar)
+                        .addGap(18, 18, 18)
+                        .addComponent(botonModificar)
+                        .addGap(18, 18, 18)
                         .addComponent(botonEliminar)
-                        .addGap(38, 38, 38)
-                        .addComponent(jButton4)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonGuardar))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         pack();
@@ -291,17 +373,18 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
     private void botonModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonModificarActionPerformed
         // TODO add your handling code here:
         String[] informacion = new String[10];
-        informacion[0] = jTextFieldID.getText();
-        informacion[1] = jTextFieldTitulo.getText();
-        informacion[2] = jTextFieldEstudio.getText();
-        informacion[3] = (String) jComboBoxEstado.getSelectedItem();
-        informacion[4] = (String) jComboBoxVersion.getSelectedItem();
-        informacion[5] = jTextFieldPrecio.getText();
-        informacion[6] = (String) jComboBoxCalificacion.getSelectedItem();
-        informacion[7] = jTextFieldAno.getText();
-        informacion[8] = (String) jComboBoxGenero.getSelectedItem();
-        informacion[9] = jTextFieldFechaPublicacion.getText();
-        
+      
+        informacion[0] = jTextFieldTitulo.getText();
+        informacion[1] = jTextFieldEstudio.getText();
+        informacion[2] = (String) jComboBoxEstado.getSelectedItem();
+        informacion[3] = (String) jComboBoxVersion.getSelectedItem();
+        informacion[4] = jTextFieldPrecio.getText();
+        informacion[5] = (String) jComboBoxCalificacion.getSelectedItem();
+        informacion[6] = jTextFieldAno.getText();
+        informacion[7] = (String) jComboBoxGenero.getSelectedItem();
+        informacion[8] = jTextFieldFechaPublicacion.getText();
+        informacion[9] = jTextFieldID.getText();
+
         for (int i = 0; i < jTablePeliculas.getColumnCount(); i++) {
             modelo.setValueAt(informacion[i], filas, i);
         }
@@ -310,17 +393,18 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
     private void botonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAgregarActionPerformed
         // TODO add your handling code here:
         String[] informacion = new String[10];
-        informacion[0] = jTextFieldID.getText();
-        informacion[1] = jTextFieldTitulo.getText();
-        informacion[2] = jTextFieldEstudio.getText();
-        informacion[3] = (String) jComboBoxEstado.getSelectedItem();
-        informacion[4] = (String) jComboBoxVersion.getSelectedItem();
-        informacion[5] = jTextFieldPrecio.getText();
-        informacion[6] = (String) jComboBoxCalificacion.getSelectedItem();
-        informacion[7] = jTextFieldAno.getText();
-        informacion[8] = (String) jComboBoxGenero.getSelectedItem();
-        informacion[9] = jTextFieldFechaPublicacion.getText();
-        
+       
+        informacion[0] = jTextFieldTitulo.getText();
+        informacion[1] = jTextFieldEstudio.getText();
+        informacion[2] = (String) jComboBoxEstado.getSelectedItem();
+        informacion[3] = (String) jComboBoxVersion.getSelectedItem();
+        informacion[4] = jTextFieldPrecio.getText();
+        informacion[5] = (String) jComboBoxCalificacion.getSelectedItem();
+        informacion[6] = jTextFieldAno.getText();
+        informacion[7] = (String) jComboBoxGenero.getSelectedItem();
+        informacion[8] = jTextFieldFechaPublicacion.getText();
+        informacion[9] = jTextFieldID.getText();
+ 
         modelo.addRow(informacion);
         jTextFieldID.setText("");
         jTextFieldTitulo.setText("");
@@ -328,6 +412,7 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
         jTextFieldPrecio.setText("");
         jTextFieldAno.setText("");
         jTextFieldFechaPublicacion.setText("");
+        
     }//GEN-LAST:event_botonAgregarActionPerformed
 
     private void jComboBoxVersionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxVersionActionPerformed
@@ -337,17 +422,18 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
     private void jTablePeliculasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePeliculasMouseClicked
         // TODO add your handling code here:
         int seleccion = jTablePeliculas.getSelectedRow();
-        jTextFieldID.setText(jTablePeliculas.getValueAt(seleccion, 0).toString());
-        jTextFieldTitulo.setText(jTablePeliculas.getValueAt(seleccion, 1).toString());
-        jTextFieldEstudio.setText(jTablePeliculas.getValueAt(seleccion, 2).toString());
-        jComboBoxEstado.setSelectedItem(jTablePeliculas.getValueAt(seleccion, 3).toString());
-        jComboBoxVersion.setSelectedItem(jTablePeliculas.getValueAt(seleccion, 4).toString());
-        jTextFieldPrecio.setText(jTablePeliculas.getValueAt(seleccion, 5).toString());
-        jComboBoxCalificacion.setSelectedItem(jTablePeliculas.getValueAt(seleccion, 6).toString());
-        jTextFieldAno.setText(jTablePeliculas.getValueAt(seleccion, 7).toString());
-        jComboBoxGenero.setSelectedItem(jTablePeliculas.getValueAt(seleccion, 8).toString());
-        jTextFieldFechaPublicacion.setText(jTablePeliculas.getValueAt(seleccion, 9).toString());
         
+        jTextFieldTitulo.setText(jTablePeliculas.getValueAt(seleccion, 0).toString());
+        jTextFieldEstudio.setText(jTablePeliculas.getValueAt(seleccion, 1).toString());
+        jComboBoxEstado.setSelectedItem(jTablePeliculas.getValueAt(seleccion, 2).toString());
+        jComboBoxVersion.setSelectedItem(jTablePeliculas.getValueAt(seleccion, 3).toString());
+        jTextFieldPrecio.setText(jTablePeliculas.getValueAt(seleccion, 4).toString());
+        jComboBoxCalificacion.setSelectedItem(jTablePeliculas.getValueAt(seleccion, 5).toString());
+        jTextFieldAno.setText(jTablePeliculas.getValueAt(seleccion, 6).toString());
+        jComboBoxGenero.setSelectedItem(jTablePeliculas.getValueAt(seleccion, 7).toString());
+        jTextFieldFechaPublicacion.setText(jTablePeliculas.getValueAt(seleccion, 8).toString());
+        jTextFieldID.setText(jTablePeliculas.getValueAt(seleccion, 9).toString());
+
         filas = seleccion;
     }//GEN-LAST:event_jTablePeliculasMouseClicked
 
@@ -360,6 +446,109 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Seleccione una fila");
         }
     }//GEN-LAST:event_botonEliminarActionPerformed
+
+    private void jButtonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarActionPerformed
+        try {
+            // TODO add your handling code here:
+            exportarExcel();
+            /* int numeroFila = jTablePeliculas.getRowCount();
+            int numeroColumna = jTablePeliculas.getColumnCount();
+            
+            Workbook book = new HSSFWorkbook();
+            Sheet hoja = book.createSheet("hoja1");
+            
+            try {
+            for (int i = -1; i < numeroFila; i++) {
+            Row fila = hoja.createRow(i + 1);
+            for (int j = 0; j < numeroColumna; j++) {
+            Cell celda = fila.createCell(j);
+            if (i == -1) {
+            celda.setCellValue(String.valueOf(jTablePeliculas.getColumnName(j)));
+            } else {
+            celda.setCellValue(String.valueOf(jTablePeliculas.getValueAt(i, j)));
+            }
+            book.write(new FileOutputStream(new File("a")));
+            }
+            }
+            } catch (Exception e) {
+            }*/
+        } catch (IOException ex) {
+            Logger.getLogger(ventanaListaRegistros.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonGuardarActionPerformed
+    public void exportarExcel() throws IOException {
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos de excel", "xls");
+        chooser.setFileFilter(filter);
+        chooser.setDialogTitle("Guardar archivo");
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            String ruta = chooser.getSelectedFile().toString().concat(".xls");
+            try {
+                File archivoXLS = new File(ruta);
+                if (archivoXLS.exists()) {
+                    archivoXLS.delete();
+                }
+                archivoXLS.createNewFile();
+                Workbook libro = new HSSFWorkbook();
+                FileOutputStream archivo = new FileOutputStream(archivoXLS);
+                Sheet hoja = libro.createSheet("Mi hoja de trabajo 1");
+                hoja.setDisplayGridlines(false);
+                for (int f = 0; f < jTablePeliculas.getRowCount(); f++) {
+                    Row fila = hoja.createRow(f);
+                    for (int c = 0; c < jTablePeliculas.getColumnCount(); c++) {
+                        Cell celda = fila.createCell(c);
+                        if (f == 0) {
+                            celda.setCellValue(jTablePeliculas.getColumnName(c));
+                        }
+                    }
+                }
+                int filaInicio = 1;
+                for (int f = 0; f < jTablePeliculas.getRowCount(); f++) {
+                    Row fila = hoja.createRow(filaInicio);
+                    filaInicio++;
+                    for (int c = 0; c < jTablePeliculas.getColumnCount(); c++) {
+                        Cell celda = fila.createCell(c);
+                        if (jTablePeliculas.getValueAt(f, c) instanceof Double) {
+                            celda.setCellValue(Double.parseDouble(jTablePeliculas.getValueAt(f, c).toString()));
+                        } else if (jTablePeliculas.getValueAt(f, c) instanceof Float) {
+                            celda.setCellValue(Float.parseFloat((String) jTablePeliculas.getValueAt(f, c)));
+                        } else {
+                            celda.setCellValue(String.valueOf(jTablePeliculas.getValueAt(f, c)));
+                        }
+                    }
+                }
+                libro.write(archivo);
+                archivo.close();
+                //Desktop.getDesktop().open(archivoXLS);
+            } catch (IOException | NumberFormatException e) {
+                throw e;
+            }
+        }
+    }
+    private void jTextFieldIDKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldIDKeyTyped
+        // TODO add your handling code here:
+       /* char c = evt.getKeyChar();
+        if (c < '0' || c > '9') {
+            evt.consume();
+        }*/
+    }//GEN-LAST:event_jTextFieldIDKeyTyped
+
+    private void jTextFieldAnoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldAnoKeyTyped
+        // TODO add your handling code here:
+       /* char c = evt.getKeyChar();
+        if (c < '0' || c > '9') {
+            evt.consume();
+        }*/
+    }//GEN-LAST:event_jTextFieldAnoKeyTyped
+
+    private void jTextFieldPrecioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldPrecioKeyTyped
+        // TODO add your handling code here:
+       /* char c = evt.getKeyChar();
+        if (c < '0' || c > '9') {
+            evt.consume();
+        }*/
+    }//GEN-LAST:event_jTextFieldPrecioKeyTyped
 
     /**
      * @param args the command line arguments
@@ -400,7 +589,7 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
     private javax.swing.JButton botonAgregar;
     private javax.swing.JButton botonEliminar;
     private javax.swing.JButton botonModificar;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButtonGuardar;
     private javax.swing.JComboBox<String> jComboBoxCalificacion;
     private javax.swing.JComboBox<String> jComboBoxEstado;
     private javax.swing.JComboBox<String> jComboBoxGenero;
@@ -408,6 +597,7 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -417,7 +607,6 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTablePeliculas;
     private javax.swing.JTextField jTextFieldAno;
     private javax.swing.JTextField jTextFieldEstudio;
