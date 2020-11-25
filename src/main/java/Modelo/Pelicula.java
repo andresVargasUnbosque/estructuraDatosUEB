@@ -5,54 +5,59 @@
  */
 package Modelo;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
  *
- * @author andre
+ * @author andres Vargas, Alejandro Forez y Cristian Morera
  */
 public class Pelicula {
-    
+
     /* Variables definidas para la clase Pelicual
     * Título: Nombre del ejemplar filmográfico.
     * Estudio: Estudio productor del ejemplar.
     * Estado: Indica el estado de la película entre un grupo de estados posibles.
     * Versiones: Una sola película puede poseer copias en distintos formatos como HD-DVD, BLUERAY, DUALDISC, entre otros.
-    * Precio: Precio dado en pesos colombianos MCTe.
+    * Precio: Precio dado en pesos colombianos.
     * Clasificación: Indica para qué audiencia o público es apta la película.
-    * Año: Año en que la película debutó en las salas. 
+    * Anio: Año en que la película debutó en las salas. 
     * Género: Genero de la película.
     * Fecha de publicación de DVD: Manteniendo el formato “día/mes/año”.
-    * ID:  Es el ID de la película. */
-    
-    private String titulo,estudio,estado,Versiones,clasificacion, genero;
-    private boolean precio;
-    private int calificacion, anio, id;
-    private Date fecha;
+    * ID:  Es el ID de la película. 
+    */
+    private String titulo, estudio, estado, Versiones, clasificacion, genero;
+    private String precio;
+    private String anio, id;
+    private String fecha;
 
     /*
     * Metodo Contructor de la aplicación
+    * @param titulo: Nombre del ejemplar filmográfico.
+    * @param estudio: Estudio productor del ejemplar..
+    * @param estado: Estado de la película entre un grupo de estados posibles.
+    * @param versiones: Versiones de las películas como HD-DVD, BLUERAY, DUALDISC, entre otros.
+    * @param precio:Precio de las peliculas.
+    * @param Clasificacion:Indica para qué audiencia o público es apta la película.
+    * @param anio: Año en que la película debutó en las salas. 
+    * @param genero: Genero de la película.
+    * @param fecha: Manteniendo el formato “día/mes/año”.
+    * @param id:Es el ID de la película.
     */
-    public Pelicula(String titulo, String estudio, String estado, String Versiones, String clasificacion, String genero, boolean precio, int calificacion, int id) {
+    public Pelicula(String titulo, String estudio, String estado, String Versiones, String precio, String Clasificacion, String anio, String genero, String fecha, String id) {
         this.titulo = titulo;
         this.estudio = estudio;
         this.estado = estado;
         this.Versiones = Versiones;
-        this.clasificacion = clasificacion;
-        this.genero = genero;
         this.precio = precio;
-        this.calificacion = calificacion;
+        this.clasificacion = Clasificacion;
+        this.anio = anio;
+        this.genero = genero;
+        this.fecha = fecha;
         this.id = id;
     }
 
-    /*
-    * Metodo Contructor de la aplicación sin inicializar
-    */
-    public Pelicula() {
-    }
     
-    /*Metodos Get y set*/
-
     public String getTitulo() {
         return titulo;
     }
@@ -101,49 +106,38 @@ public class Pelicula {
         this.genero = genero;
     }
 
-    public boolean isPrecio() {
+    public String getPrecio() {
         return precio;
     }
-
-    public void setPrecio(boolean precio) {
+     
+    public void setPrecio(String precio) {
         this.precio = precio;
     }
 
-    public int getCalificacion() {
-        return calificacion;
-    }
-
-    public void setCalificacion(int calificacion) {
-        this.calificacion = calificacion;
-    }
-
-    public int getAnio() {
+    public String getAnio() {
         return anio;
     }
 
-    public void setAnio(int anio) {
+    public void setAnio(String anio) {
         this.anio = anio;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Date getFecha() {
+    public String getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(String fecha) {
         this.fecha = fecha;
     }
+
     
-    
-    
-    
-    
-    
+
 }

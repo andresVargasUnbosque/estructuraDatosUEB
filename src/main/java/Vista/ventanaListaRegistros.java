@@ -5,10 +5,16 @@
  */
 package Vista;
 
+import Modelo.Pelicula;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -24,40 +30,26 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  *
- * @author andre
+ * @author andres Vargas, Alejandro Forez y Cristian Morera
  */
 public class ventanaListaRegistros extends javax.swing.JFrame {
 
     public DefaultTableModel modelo;
     int filas;
+    public ArrayList<Pelicula> arregloPeliculas = new ArrayList<>();
 
     /**
-     * Creates new form ventanaListaRegistros
+     * El metodo ventanaListaRegistros es el metodo constructor y permite
+     * inicializar los elementos del formulario de la clase, el arreglo de
+     * peliculasu y el modelo de la tabla ademas de hacer el llamado a la clase
+     * MenuPrincipalJFrame para que las variables anterioires funcionen.
      */
     public ventanaListaRegistros() {
         initComponents();
-      /*  modelo = new DefaultTableModel();
-        modelo.addColumn("ID");
-        modelo.addColumn("TITULO");
-        modelo.addColumn("ESTUDIO");
-        modelo.addColumn("ESTADO");
-        modelo.addColumn("VERSIONES");
-        modelo.addColumn("PRECIO");
-        modelo.addColumn("CALIFICACION");
-        modelo.addColumn("AÑO");
-        modelo.addColumn("GENERO");
-        modelo.addColumn("FECHA");*/
-       //  this.jTablePeliculas.setModel(modelo);
-        //inicializarTabla();
         MenuPrincipalJFrame frame = new MenuPrincipalJFrame();
-        
-        modelo=frame.cargarArchivo();
+        arregloPeliculas = frame.retornarPeliculas();
+        modelo = frame.cargarArchivo();
         this.jTablePeliculas.setModel(modelo);
-    }
-
-    public void inicializarTabla() {
-        MenuPrincipalJFrame frame = new MenuPrincipalJFrame();
-        this.jTablePeliculas.setModel(frame.cargarArchivo());
     }
 
     /**
@@ -97,6 +89,9 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTablePeliculas = new javax.swing.JTable();
         jLabel12 = new javax.swing.JLabel();
+        jComboBoxFiltro = new javax.swing.JComboBox<>();
+        jLabelFiltrarPor = new javax.swing.JLabel();
+        jButtonBuscar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -247,6 +242,19 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
 
         jLabel12.setIcon(new javax.swing.ImageIcon("C:\\Users\\andre\\Desktop\\UEBlogo2.png")); // NOI18N
 
+        jComboBoxFiltro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-------------", "Fecha", "Genero", "Título", "Por Costos", "Clasificación", "Versiones", "" }));
+
+        jLabelFiltrarPor.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabelFiltrarPor.setForeground(new java.awt.Color(0, 153, 51));
+        jLabelFiltrarPor.setText("Filtrar Por:");
+
+        jButtonBuscar.setText("Buscar");
+        jButtonBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBuscarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -255,96 +263,112 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
                 .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel9)
-                            .addComponent(jTextFieldID)
-                            .addComponent(jTextFieldPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(38, 38, 38)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jComboBoxCalificacion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextFieldTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jTextFieldAno, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6)
-                            .addComponent(jTextFieldEstudio, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jComboBoxGenero, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel8)
-                                .addComponent(jComboBoxEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel7))
-                        .addGap(39, 39, 39)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextFieldFechaPublicacion)
-                            .addComponent(jComboBoxVersion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabelFiltrarPor)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel11)
-                                    .addComponent(jLabel10))
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addComponent(jScrollPane1)
+                                .addComponent(jComboBoxFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(27, 27, 27)
+                                .addComponent(jButtonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(botonModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(botonAgregar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel12)
-                                    .addComponent(botonEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButtonGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap())))
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel9)
+                                    .addComponent(jTextFieldID)
+                                    .addComponent(jTextFieldPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(38, 38, 38)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jComboBoxCalificacion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jTextFieldTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jTextFieldAno, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jTextFieldEstudio, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jComboBoxGenero, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel8)
+                                        .addComponent(jComboBoxEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel7))
+                                .addGap(39, 39, 39)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel10)
+                                    .addComponent(jTextFieldFechaPublicacion)
+                                    .addComponent(jComboBoxVersion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel11)
+                                        .addGap(0, 0, Short.MAX_VALUE)))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(botonModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(botonAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jLabel12)
+                                        .addComponent(botonEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jButtonGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(22, 22, 22)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel12))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(32, Short.MAX_VALUE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextFieldID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFieldTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFieldEstudio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBoxEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBoxVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel11))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextFieldPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFieldAno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBoxCalificacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBoxGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFieldFechaPublicacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(29, 29, 29)))
+                .addComponent(jLabelFiltrarPor)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel10))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextFieldID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextFieldTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextFieldEstudio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBoxEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBoxVersion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel8)
-                    .addComponent(jLabel11))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextFieldPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextFieldAno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBoxCalificacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBoxGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextFieldFechaPublicacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jComboBoxFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonBuscar))
+                .addGap(49, 49, 49)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(1, 1, 1)
@@ -370,10 +394,14 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextFieldPrecioActionPerformed
 
+    /**
+     * El metodo del boton botonModificarActionPerformed permite modificar y
+     * alamcenar los registros de la tabla.
+     */
     private void botonModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonModificarActionPerformed
         // TODO add your handling code here:
         String[] informacion = new String[10];
-      
+
         informacion[0] = jTextFieldTitulo.getText();
         informacion[1] = jTextFieldEstudio.getText();
         informacion[2] = (String) jComboBoxEstado.getSelectedItem();
@@ -390,10 +418,14 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_botonModificarActionPerformed
 
+    /**
+     * El metodo del boton botonModificarActionPerformed permite modificar y
+     * almacenar nuevos registros a la tabla.
+     */
     private void botonAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAgregarActionPerformed
         // TODO add your handling code here:
         String[] informacion = new String[10];
-       
+
         informacion[0] = jTextFieldTitulo.getText();
         informacion[1] = jTextFieldEstudio.getText();
         informacion[2] = (String) jComboBoxEstado.getSelectedItem();
@@ -404,7 +436,7 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
         informacion[7] = (String) jComboBoxGenero.getSelectedItem();
         informacion[8] = jTextFieldFechaPublicacion.getText();
         informacion[9] = jTextFieldID.getText();
- 
+
         modelo.addRow(informacion);
         jTextFieldID.setText("");
         jTextFieldTitulo.setText("");
@@ -412,17 +444,21 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
         jTextFieldPrecio.setText("");
         jTextFieldAno.setText("");
         jTextFieldFechaPublicacion.setText("");
-        
+
     }//GEN-LAST:event_botonAgregarActionPerformed
 
     private void jComboBoxVersionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxVersionActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBoxVersionActionPerformed
 
+    /**
+     * El metodo del jTablePeliculasMouseClicked permite seleccionar y mostrar
+     * un registro seleccionado para poder modificarlo.
+     */
     private void jTablePeliculasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePeliculasMouseClicked
         // TODO add your handling code here:
         int seleccion = jTablePeliculas.getSelectedRow();
-        
+
         jTextFieldTitulo.setText(jTablePeliculas.getValueAt(seleccion, 0).toString());
         jTextFieldEstudio.setText(jTablePeliculas.getValueAt(seleccion, 1).toString());
         jComboBoxEstado.setSelectedItem(jTablePeliculas.getValueAt(seleccion, 2).toString());
@@ -437,6 +473,10 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
         filas = seleccion;
     }//GEN-LAST:event_jTablePeliculasMouseClicked
 
+    /**
+     * El metodo del boton botonEliminarActionPerformed permite eliminar un
+     * registro de la tabla.
+     */
     private void botonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarActionPerformed
         // TODO add your handling code here:
         int fila = jTablePeliculas.getSelectedRow();
@@ -451,31 +491,14 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
         try {
             // TODO add your handling code here:
             exportarExcel();
-            /* int numeroFila = jTablePeliculas.getRowCount();
-            int numeroColumna = jTablePeliculas.getColumnCount();
-            
-            Workbook book = new HSSFWorkbook();
-            Sheet hoja = book.createSheet("hoja1");
-            
-            try {
-            for (int i = -1; i < numeroFila; i++) {
-            Row fila = hoja.createRow(i + 1);
-            for (int j = 0; j < numeroColumna; j++) {
-            Cell celda = fila.createCell(j);
-            if (i == -1) {
-            celda.setCellValue(String.valueOf(jTablePeliculas.getColumnName(j)));
-            } else {
-            celda.setCellValue(String.valueOf(jTablePeliculas.getValueAt(i, j)));
-            }
-            book.write(new FileOutputStream(new File("a")));
-            }
-            }
-            } catch (Exception e) {
-            }*/
         } catch (IOException ex) {
             Logger.getLogger(ventanaListaRegistros.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButtonGuardarActionPerformed
+
+    /**
+     * El metodo exportarExcel permite exportar la tabla a un archivo csv.
+     */
     public void exportarExcel() throws IOException {
         JFileChooser chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos de excel", "xls");
@@ -528,7 +551,7 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
     }
     private void jTextFieldIDKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldIDKeyTyped
         // TODO add your handling code here:
-       /* char c = evt.getKeyChar();
+        /* char c = evt.getKeyChar();
         if (c < '0' || c > '9') {
             evt.consume();
         }*/
@@ -536,7 +559,7 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
 
     private void jTextFieldAnoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldAnoKeyTyped
         // TODO add your handling code here:
-       /* char c = evt.getKeyChar();
+        /* char c = evt.getKeyChar();
         if (c < '0' || c > '9') {
             evt.consume();
         }*/
@@ -544,11 +567,147 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
 
     private void jTextFieldPrecioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldPrecioKeyTyped
         // TODO add your handling code here:
-       /* char c = evt.getKeyChar();
+        /* char c = evt.getKeyChar();
         if (c < '0' || c > '9') {
             evt.consume();
         }*/
     }//GEN-LAST:event_jTextFieldPrecioKeyTyped
+
+    /**
+     * El metodo jButtonBuscarActionPerformed permite realizar el filtro y la
+     * busqueda en la tabla de registros.
+     */
+    private void jButtonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuscarActionPerformed
+        // TODO add your handling code here:
+        String valorLista = (String) jComboBoxFiltro.getSelectedItem();
+        System.out.println("valorLista:" + valorLista);
+
+        try {
+
+            if (valorLista.equals("Fecha")) {
+                //Limpiar tabla
+                limpiarData();
+                int anio = Integer.parseInt(jTextFieldAno.getText());
+
+                for (Pelicula objArregloPelicula : arregloPeliculas) {
+                    if (Integer.parseInt(objArregloPelicula.getAnio()) >= anio) {
+                        modelo.addRow(cargarModelo(objArregloPelicula.getId(), objArregloPelicula.getTitulo(), objArregloPelicula.getEstudio(), objArregloPelicula.getEstado(), objArregloPelicula.getVersiones(), objArregloPelicula.getPrecio(), objArregloPelicula.getClasificacion(), objArregloPelicula.getAnio(), objArregloPelicula.getGenero(), objArregloPelicula.getFecha()));
+                    }
+                }
+            } else if (valorLista.equals("Genero")) {
+                //Limpiar tabla
+                limpiarData();
+                String valorGenero = (String) jComboBoxGenero.getSelectedItem();
+
+                for (Pelicula objArregloPelicula : arregloPeliculas) {
+                    if (objArregloPelicula.getGenero().equals(valorGenero)) {
+                        modelo.addRow(cargarModelo(objArregloPelicula.getId(), objArregloPelicula.getTitulo(), objArregloPelicula.getEstudio(), objArregloPelicula.getEstado(), objArregloPelicula.getVersiones(), objArregloPelicula.getPrecio(), objArregloPelicula.getClasificacion(), objArregloPelicula.getAnio(), objArregloPelicula.getGenero(), objArregloPelicula.getFecha()));
+                    }
+                }
+            } else if (valorLista.equals("Título")) {
+                //Limpiar tabla
+                limpiarData();
+                String titulo = (String) jTextFieldTitulo.getText();
+
+                for (Pelicula objArregloPelicula : arregloPeliculas) {
+                    if (objArregloPelicula.getTitulo().equals(titulo)) {
+                        modelo.addRow(cargarModelo(objArregloPelicula.getId(), objArregloPelicula.getTitulo(), objArregloPelicula.getEstudio(), objArregloPelicula.getEstado(), objArregloPelicula.getVersiones(), objArregloPelicula.getPrecio(), objArregloPelicula.getClasificacion(), objArregloPelicula.getAnio(), objArregloPelicula.getGenero(), objArregloPelicula.getFecha()));
+                    }
+                }
+            } else if (valorLista.equals("Por Costos")) {
+                //Limpiar tabla
+                limpiarData();
+                int precio = Integer.parseInt(jTextFieldPrecio.getText());
+                String valorGenero2 = (String) jComboBoxGenero.getSelectedItem();
+
+                for (Pelicula objArregloPelicula : arregloPeliculas) {
+                    if (Integer.parseInt(objArregloPelicula.getPrecio().replaceAll(",00", "")) >= precio && objArregloPelicula.getGenero().equals(valorGenero2)) {
+                        modelo.addRow(cargarModelo(objArregloPelicula.getId(), objArregloPelicula.getTitulo(), objArregloPelicula.getEstudio(), objArregloPelicula.getEstado(), objArregloPelicula.getVersiones(), objArregloPelicula.getPrecio(), objArregloPelicula.getClasificacion(), objArregloPelicula.getAnio(), objArregloPelicula.getGenero(), objArregloPelicula.getFecha()));
+                    }
+                }
+            } else if (valorLista.equals("Clasificación")) {
+                //Limpiar tabla
+                limpiarData();
+                String clasificacion = (String) jComboBoxCalificacion.getSelectedItem();
+
+                for (Pelicula objArregloPelicula : arregloPeliculas) {
+                    if (objArregloPelicula.getClasificacion().equals(clasificacion)) {
+                        modelo.addRow(cargarModelo(objArregloPelicula.getId(), objArregloPelicula.getTitulo(), objArregloPelicula.getEstudio(), objArregloPelicula.getEstado(), objArregloPelicula.getVersiones(), objArregloPelicula.getPrecio(), objArregloPelicula.getClasificacion(), objArregloPelicula.getAnio(), objArregloPelicula.getGenero(), objArregloPelicula.getFecha()));
+                    }
+                }
+            } else if (valorLista.equals("Versiones")) {//versiones
+                //Limpiar tabla
+                limpiarData();
+                String versiones = (String) jComboBoxVersion.getSelectedItem();
+
+                for (Pelicula objArregloPelicula : arregloPeliculas) {
+                    if (objArregloPelicula.getVersiones().equals(versiones)) {
+                        modelo.addRow(cargarModelo(objArregloPelicula.getId(), objArregloPelicula.getTitulo(), objArregloPelicula.getEstudio(), objArregloPelicula.getEstado(), objArregloPelicula.getVersiones(), objArregloPelicula.getPrecio(), objArregloPelicula.getClasificacion(), objArregloPelicula.getAnio(), objArregloPelicula.getGenero(), objArregloPelicula.getFecha()));
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Por favor seleccione una opción de filtro");
+            }
+        } catch (Exception e) {
+        }
+    }//GEN-LAST:event_jButtonBuscarActionPerformed
+
+    /**
+     * El metodo limpiarData permite limpiar la tabla de registros.
+     */
+    public void limpiarData() {
+        DefaultTableModel tb = (DefaultTableModel) jTablePeliculas.getModel();
+        int a = jTablePeliculas.getRowCount() - 1;
+        for (int i = a; i >= 0; i--) {
+            tb.removeRow(tb.getRowCount() - 1);
+        }
+    }
+
+    /**
+     * El metodo limpiarData permite limpiar la tabla de registros.
+     */
+    public Calendar carbiarFecha(String fecha) throws ParseException {
+
+        SimpleDateFormat curFormater = new SimpleDateFormat("dd/MM/yyyy");
+        Date dateObj = curFormater.parse(fecha);
+        Calendar calendario = Calendar.getInstance();
+        calendario.setTime(dateObj);
+
+        return calendario;
+    }
+
+    /**
+     * El metodo cargarModelo permite cargar la estructura de la tabla de
+     * registros.
+     *
+     * @param titulo: Nombre del ejemplar filmográfico.
+     * @param estudio: Estudio productor del ejemplar..
+     * @param estado: Estado de la película entre un grupo de estados posibles.
+     * @param versiones: Versiones de las películas como HD-DVD, BLUERAY,
+     * DUALDISC, entre otros.
+     * @param precio:Precio de las peliculas.
+     * @param Clasificacion:Indica para qué audiencia o público es apta la
+     * película.
+     * @param anio: Año en que la película debutó en las salas.
+     * @param genero: Genero de la película.
+     * @param fecha: Manteniendo el formato “día/mes/año”.
+     * @param id:Es el ID de la película.
+     */
+    public String[] cargarModelo(String id, String titulo, String estudio, String estado, String versiones, String precio, String clasificacion, String anio, String genero, String fechaPublicacion) {
+        String[] informacion = new String[10];
+        informacion[0] = titulo;
+        informacion[1] = estudio;
+        informacion[2] = estado;
+        informacion[3] = versiones;
+        informacion[4] = precio;
+        informacion[5] = clasificacion;
+        informacion[6] = anio;
+        informacion[7] = genero;
+        informacion[8] = fechaPublicacion;
+        informacion[9] = id;
+
+        return informacion;
+    }
 
     /**
      * @param args the command line arguments
@@ -589,9 +748,11 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
     private javax.swing.JButton botonAgregar;
     private javax.swing.JButton botonEliminar;
     private javax.swing.JButton botonModificar;
+    private javax.swing.JButton jButtonBuscar;
     private javax.swing.JButton jButtonGuardar;
     private javax.swing.JComboBox<String> jComboBoxCalificacion;
     private javax.swing.JComboBox<String> jComboBoxEstado;
+    private javax.swing.JComboBox<String> jComboBoxFiltro;
     private javax.swing.JComboBox<String> jComboBoxGenero;
     private javax.swing.JComboBox<String> jComboBoxVersion;
     private javax.swing.JLabel jLabel1;
@@ -606,6 +767,7 @@ public class ventanaListaRegistros extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabelFiltrarPor;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTablePeliculas;
     private javax.swing.JTextField jTextFieldAno;

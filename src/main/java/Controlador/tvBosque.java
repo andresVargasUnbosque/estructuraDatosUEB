@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 /**
  *
- * @author andre
+ * @author andres Vargas, Alejandro Forez y Cristian Morera
  */
 public class tvBosque {
 
@@ -24,10 +24,5 @@ public class tvBosque {
         // TODO code application logic here
         MenuPrincipalJFrame menuPrincipalJFrame = new MenuPrincipalJFrame();
         menuPrincipalJFrame.setVisible(true);
-
-        /*  String ruta="";
-        
-        cargarArchivo(ruta);*/
     }
-
 }

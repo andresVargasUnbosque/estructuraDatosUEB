@@ -5,16 +5,23 @@
  */
 package Vista;
 
+import Modelo.Pelicula;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author andre
+ * @author andres Vargas, Alejandro Forez y Cristian Morera
  */
 public class MenuPrincipalJFrame extends javax.swing.JFrame {
 
@@ -22,9 +29,13 @@ public class MenuPrincipalJFrame extends javax.swing.JFrame {
     public static final String QUOTE = "\"";
 
     public String ruta;
+    //public SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+
+    public ArrayList<Pelicula> arregloPeliculas = new ArrayList<>();
 
     /**
-     * Creates new form MenuPrincipalJFrame
+     * Metodo constructor de la calse MenuPrincipalJFrame, permite Crear un
+     * nuevo form.
      */
     public MenuPrincipalJFrame() {
         initComponents();
@@ -56,7 +67,6 @@ public class MenuPrincipalJFrame extends javax.swing.JFrame {
         jMenu4 = new javax.swing.JMenu();
         jMenu5 = new javax.swing.JMenu();
         jMenu6 = new javax.swing.JMenu();
-        botonBuscarRegistros = new javax.swing.JButton();
         btnListaRegistros = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
 
@@ -110,16 +120,6 @@ public class MenuPrincipalJFrame extends javax.swing.JFrame {
         setBackground(new java.awt.Color(255, 255, 255));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-        botonBuscarRegistros.setBackground(new java.awt.Color(255, 255, 255));
-        botonBuscarRegistros.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        botonBuscarRegistros.setForeground(new java.awt.Color(0, 153, 0));
-        botonBuscarRegistros.setText("Busqueda en registros ya cargados");
-        botonBuscarRegistros.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonBuscarRegistrosActionPerformed(evt);
-            }
-        });
-
         btnListaRegistros.setBackground(new java.awt.Color(255, 255, 255));
         btnListaRegistros.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnListaRegistros.setForeground(new java.awt.Color(255, 153, 0));
@@ -142,9 +142,7 @@ public class MenuPrincipalJFrame extends javax.swing.JFrame {
                 .addGap(40, 40, 40))
             .addGroup(layout.createSequentialGroup()
                 .addGap(168, 168, 168)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnListaRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(botonBuscarRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(btnListaRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(189, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -154,24 +152,17 @@ public class MenuPrincipalJFrame extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addGap(65, 65, 65)
                 .addComponent(btnListaRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
-                .addComponent(botonBuscarRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(131, Short.MAX_VALUE))
+                .addContainerGap(204, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void botonBuscarRegistrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarRegistrosActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_botonBuscarRegistrosActionPerformed
 
     private void btnListaRegistrosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListaRegistrosActionPerformed
         // TODO add your handling code here:
         ventanaListaRegistros ventanaRegistros = new ventanaListaRegistros();
         ventanaRegistros.setVisible(true);
-        
-
     }//GEN-LAST:event_btnListaRegistrosActionPerformed
 
     /**
@@ -209,37 +200,52 @@ public class MenuPrincipalJFrame extends javax.swing.JFrame {
         });
     }
 
-
+    /*
+    * El metodo cargarArchivo permite leer el archivo csv y almacenar los reristros en un arraylisy de objetos pelicula.
+    * @return Permite retornar un DefaultTableModel el cual pertenece al modelot de JTable.
+    */
     public DefaultTableModel cargarArchivo() {
         DefaultTableModel modeloTabla = new DefaultTableModel();
         JFileChooser archivo = new JFileChooser(System.getProperty("user.dir"));
 
         try {
+            int contador = 0;
             String texto = "";
-            Object cabeceras[] = {"TITULO", "ESTUDIO", "ESTADO", "VERSIONES", "PRECIO","CALIFICACION", "AÑO", "GENERO", "FECHA","ID"};
+            Object cabeceras[] = {"TITULO", "ESTUDIO", "ESTADO", "VERSIONES", "PRECIO", "CALIFICACION", "AÑO", "GENERO", "FECHA", "ID"};
             modeloTabla = new DefaultTableModel(cabeceras, 0);
             archivo.showOpenDialog(this);
 
             File abrir = archivo.getSelectedFile();
             Object[] elemento = new Object[10];
             if (archivo != null) {
-                FileReader fichero = new FileReader(abrir);
-                BufferedReader leer = new BufferedReader(fichero);
+                //FileReader fichero = new FileReader(abrir);
+                //BufferedReader leer = new BufferedReader(fichero,"UTF-8");
+                BufferedReader leer = new BufferedReader(new InputStreamReader(new FileInputStream(abrir),"UTF-8"));
                 while ((texto = leer.readLine()) != null) {
-                    String registro[] = texto.split(";");
-                    elemento[0] = registro[0];
-                    elemento[1] = registro[1];
-                    elemento[2] = registro[2];
-                    elemento[3] = registro[3];
-                    elemento[4] = registro[4];
-                    elemento[5] = registro[5];
-                    elemento[6] = registro[6];
-                    elemento[7] = registro[7];
-                    elemento[8] = registro[8];
-                    elemento[9] = registro[9];
-                    modeloTabla.addRow(elemento);
+                    if (contador > 0) {
+                        String registro[] = texto.split(";");
+                        elemento[0] = registro[0];
+                        elemento[1] = registro[1];
+                        elemento[2] = registro[2];
+                        elemento[3] = registro[3];
+                        elemento[4] = registro[4];
+                        elemento[5] = registro[5];
+                        elemento[6] = registro[6];
+                        elemento[7] = registro[7];
+                        elemento[8] = registro[8];
+                        elemento[9] = registro[9];
+
+                        /* Date dateObj = formato.parse(elemento[8].toString());
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(dateObj);*/
+                        // System.out.println("elemento[0].toString()"+elemento[0].toString());
+                        Pelicula objPelicula = new Pelicula(registro[0], registro[1], registro[2], registro[3], registro[4], registro[5], registro[6], registro[7], registro[8], registro[9]);
+                        arregloPeliculas.add(objPelicula);
+                        modeloTabla.addRow(elemento);
+                    }
+                    contador++;
                 }
-              //  jTable1.setModel(modeloTabla);
+                //  jTable1.setModel(modeloTabla);
             }
         } catch (Exception e) {
 
@@ -247,8 +253,16 @@ public class MenuPrincipalJFrame extends javax.swing.JFrame {
         return modeloTabla;
     }
 
+    /*
+    * El metodo retornarPeliculas permite retornar el arreglo de peliculas que se cargaron atraves del archivo csv
+    * @return ArrayList<Pelicula>
+    */
+    public ArrayList<Pelicula> retornarPeliculas() {
+        System.out.println("arregloPeliculas" + arregloPeliculas);
+        return arregloPeliculas;
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton botonBuscarRegistros;
     private javax.swing.JButton btnListaRegistros;
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JLabel jLabel2;
